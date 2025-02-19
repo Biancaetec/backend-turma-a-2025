@@ -9,4 +9,4 @@ const PaymentController = {
 }
 
 export default PaymentController;
-// criar update
+// criar update,delete e get aqui dentro 
