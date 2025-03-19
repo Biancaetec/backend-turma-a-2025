@@ -1,21 +1,18 @@
 import {z} from "zod"
 
 const PaymentSchema = z.object({
-    data: z.string().datetime(10, {message: "Pagamento inválido"}),
-    numerorecibo: z.number().int().positive(4, {message: "Número de recibo inválido"}),
-    usuarioId: z.number().int().positive(2, {message: "Id do usuário inválido"}),
-    valor: z.number().positive(), (4, {message: "Valor inválido"}),
-    observacao: z.string().max(100, {message: "Observação inválida"}),
-
-});
-
+    data: z.string().datetime(),
+    valor: z.number().positive(),
+    numero: z.number().int().positive(),
+    observacao: z.string().optional()
+}); 
 
 const PaymentController = {
  async createPayment(req, res) {
     try {
-        const {data, numerorecibo, usuarioId, valor, observacao} = req.body;
-        PaymentSchema.parse({data, numerorecibo, usuarioId, valor, observacao});
-        console.log({data, numerorecibo, usuarioId, valor, observacao});
+        const {nome,email, senha} = req.body;
+        PaymentSchema.parse({nome,email, senha});
+        console.log({nome, email, senha});
         res.status(201).json({ message: 'Payment created successfully' });
     } catch (error) {
         if (error instanceof z.ZodError) {
@@ -31,8 +28,23 @@ const PaymentController = {
         }
         res.status(500).send({ error: error.message });
     }
- }
-}
+ },
 
+
+async updatePayment(req, res) {
+    try {
+        const {id} = req.params;
+        const {valor, numero, data, observacao} = req.body;
+        PaymentSchema.parse({valor, numero, data, observacao});
+        res.status(200).json({ message: `Payment updated successfully`,
+            data: {id, valor, numero, data, observacao}});
+    } catch (error) {
+        if (error instanceof z.ZodError) {
+            return res.status(400).json({ message: "Validation error",
+            datails: error.errors});
+        }
+       return  res.status(500).json({ message: error.message });
+    }
+},
+}
 export default PaymentController;
-// criar update,delete e get aqui dentro 
